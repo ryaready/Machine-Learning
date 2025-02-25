@@ -1,0 +1,186 @@
+%
+% File acl2014.tex
+%
+% Contact: koller@ling.uni-potsdam.de, yusuke@nii.ac.jp
+%%
+%% Based on the style files for ACL-2013, which were, in turn,
+%% Based on the style files for ACL-2012, which were, in turn,
+%% based on the style files for ACL-2011, which were, in turn, 
+%% based on the style files for ACL-2010, which were, in turn, 
+%% based on the style files for ACL-IJCNLP-2009, which were, in turn,
+%% based on the style files for EACL-2009 and IJCNLP-2008...
+
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{times}
+\usepackage{qtree}
+\usepackage{tree-dvips}
+\usepackage{synttree}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{tkz-berge}
+\usepackage[font=footnotesize]{caption}
+\usepackage[utf8]{inputenc}
+\usepackage{arydshln}
+\usepackage{booktabs}
+\usepackage{hyperref}
+\usepackage{listings}
+
+%\setlength\titlebox{5cm}
+
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argsort}{arg\,sort}
+%\setlength\titlebox{6.5cm}    % Expanding the titlebox
+
+\newcommand{\squishlist}{
+ \begin{list}{$\bullet$}
+  { \setlength{\itemsep}{0pt}
+     \setlength{\parsep}{3pt}
+     \setlength{\topsep}{3pt}
+     \setlength{\partopsep}{0pt}
+     \setlength{\leftmargin}{1.5em}
+     \setlength{\labelwidth}{1em}
+     \setlength{\labelsep}{0.5em} } }
+
+
+\newcounter{Lcount}
+\newcommand{\squishlisttwo}{
+\begin{list}{\arabic{Lcount}. }
+{ \usecounter{Lcount}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{0pt}
+\setlength{\partopsep}{0pt}
+\setlength{\leftmargin}{2em}
+\setlength{\labelwidth}{1.5em}
+\setlength{\labelsep}{0.5em} } }
+
+\lstset{
+  language=Python,
+basicstyle=\ttfamily,
+breaklines=true,
+frame=none,
+numbers=none,
+backgroundcolor=\color{white},
+showstringspaces=false,
+keywordstyle=\bfseries\color{blue},
+commentstyle=\itshape\color{gray},
+stringstyle=\color{red},
+morekeywords={import, as, np, plt, for, in, def, return}
+}
+
+
+\def\cs#1{{\color{blue}{\bf [CS:} {\it{#1}}{\bf ]}}}
+\newcommand{\torevise}[1]{\textcolor{red}{#1}}
+
+\newcommand{\squishend}{
+\end{list} }
+
+\begin{document}
+
+
+\begin{center}
+\includegraphics[scale=0.25]{sutd.png}
+\end{center}
+
+
+\begin{center}
+{{50.007 Machine Learning, Spring 2025\\Homework 1}}
+\end{center}
+
+\begin{center}
+	{\small Due 28 February 2025, 11.59pm}
+\end{center}
+
+
+In this homework, we would like to look at \textbf{Linear Classification} including perceptron algorithm and hinge loss, and \textbf{Regression} including linear regression and ridge regression. 
+
+\section{Linear Classification [40 points]}
+\subsection{Hinge Loss with Offset [15 points]}
+Hinge loss is a convex surrogate for the zero-one loss used for linear classification in non-realizable case. In our class, we have already studied hinge loss without an offset. Now, let's consider hinge loss with an offset $\theta_0$. Given a training set $\{(x_i, y_i)\}_{i=1}^{n}$, where $x_i \in \mathbb{R}^d$ is the feature vector and $y_i \in \{-1, +1\}$ is the corresponding label.
+\newline
+\noindent (1) [\textcolor{blue}{5 points}] Please provide the definition of the hinge loss function with the offset $\theta_0$.  
+\newline
+\noindent (2) [\textcolor{blue}{10 points}] Describe how to update the weights $\theta$ and $\theta_0$ to minimize the hinge loss function using stochastic sub-gradient descent (SSGD). You must explicitly write out the whole procedure of SSGD.
+\newline
+
+\subsection{Code Exercise: Linear Classification for Handwritten Digit Recognition [25 points]}
+In this exercise, you will work with a real-world dataset from \href{http://www.unitedstateszipcodes.org/zip-code-database}{US Postal Service Zip Code Database}, which contains 16 $\times$ 16 pixel images of handwritten zip codes. These images are preprocessed versions of scanned handwritten zip codes and are used for automatic handwritten digit recognition. For this task, you will focus on recognizing only two digits: \textbf{1} and \textbf{5}.
+
+To simplify the problem, you will use two features: \textbf{intensity}  and \textbf{symmetry}. Digit 5 tends to occupy more black pixels, resulting in higher average pixel intensity compared to digit 1. Additionally, digit 1 is typically symmetric, while digit 5 is not. You will define \textbf{asymmetry} as the average difference between an image and its flipped version, and \textbf{symmetry} as the negation of asymmetry. This allows digit 1 to have higher symmetry values than digit 5, making it easier to distinguish between these two digits based on these features.
+\newline
+\textbf{\textit{Instructions}}:
+\begin{itemize}
+	\item The training and test datasets are provided in the files `hw1\_train\_1\_5.csv' and `hw1\_test\_1\_5.csv', respectively. Each row in the CSV files represents an example, where the first value is the symmetry of the image, the second value is the average intensity of the image, and the third value is the label.
+	\item Ensure that the labels are converted: digit \textbf{1} becomes +1 and digit \textbf{5} becomes -1 for binary classification.
+\end{itemize}
+
+\noindent (1) [\textcolor{blue}{5 points}] \textbf{Implement the Perceptron Algorithm for Linear Classification with Offset.} Write the code for the perceptron algorithm (with zero-one loss) to classify the two digits using the features intensity and symmetry. Ensure that your implementation includes an offset (bias term) for the linear classifier.
+\newline
+\noindent (2) [\textcolor{blue}{5 points}] \textbf{Train Linear Classifier with Offset using Perceptron Algorithm and Evaluate.}
+Using the perceptron algorithm you implemented, train the linear classifier with offset on the training set for 1 epoch (\textit{i.e.}, traversing the training set 1 time) and 5 epochs, respectively. For both training runs, report the following:
+\begin{itemize}
+	\item The learned weights ($\hat{\theta}$)
+	\item The learned bias ($\hat{\theta}_0$)
+	\item The training error
+	\item The accuracy of the model on the test set 
+\end{itemize}
+
+\noindent (3) [\textcolor{blue}{5 points}] \textbf{Implement the Stochastic Sub-Gradient Descent Algorithm for Linear Classification with Offset.} Write the code for the stochastic sub-gradient descent (with hinge loss) to classify the two digits using the features intensity and symmetry. Set your stopping criterion as the maximum number of iterations, and fix the learning rate throughout the entire training process.
+\newline
+\noindent (4) [\textcolor{blue}{5 points}] \textbf{Train Linear Classifier with Offset using SSGD and Evaluate.}
+Using the SSGD algorithm you implemented, train the linear classifier with offset on the training set for 5000 iterations, with a learning rate of 0.1, and report the learned weights ($\hat{\theta}$), the learned bias ($\hat{\theta}_0$), the training error, as well as the accuracy of the model on the test set.
+\newline
+\noindent (5) [\textcolor{blue}{5 points}] What are your observations of the differences in training errors between the Perceptron Algorithm (using 5 epochs) and SSGD (using 5000 iterations)?
+
+
+\section{Linear Regression [40 points]}
+In this exercise, you will experiment with linear on a given data set. The inputs are in the file `hw1\_linear\_x.dat' and the desired outputs in `hw1\_linear\_y.dat'. Note that the input only has one feature, and the output is also one variable. 
+\newline
+\noindent (1) [\textcolor{blue}{10 points}] In class, we omit $\theta_0$ for simplicity. Now let us bring $\theta_0$ back, write the cost function - least squares criterion - with offset. Additionally, write the closed-form solution and stochastic gradient descent procedure with offset. (Hint: recall what we discussed in class that how to solve  $\theta_0$ together with $\theta$  by adding 1 to the input feature.)
+\newline
+\noindent (2) [\textcolor{blue}{10 points}] Write a function implementing the closed form linear regression formula in your previous answer to obtain the optimal $\theta$ and  $\theta_0$ and report them. Plot both the linear regression line with the optimal weights and the data on the same graph. Write a function that will evaluate the training error in terms of empirical risk of the resulting fit and report the error.
+\newline
+\noindent (3) [\textcolor{blue}{10 points}] Write a function to learn the optimal $\theta$ and  $\theta_0$ using gradient descent algorithm. Consider setting the learning rate $\eta$ as a constant (0.01) and update it for 5 times. Report $\theta$, $\theta_0$, and training error for the minimum empirical risk. Plot both the linear regression line and the data on the same graph. 
+\newline
+\noindent (4) [\textcolor{blue}{10 points}] Write a function to learn the optimal $\theta$ and  $\theta_0$ using stochastic gradient descent algorithm. Use the same learning rate but run for 5 epochs (with replacement). Report the optimal $\theta$, $\theta_0$, and training error. Plot both the linear regression line and the data on the same graph.
+
+\section{Ridge Regression [20 points]}
+In this exercise, you will explore the effects of $\lambda$ in ridge regression on generalization. You will use `hw1\_ridge\_x.dat' as the inputs and `hw1\_ridge\_y.dat' as the desired output. Please note that a column vector of 1s is already added to the inputs. Recall from what you learned in class: to find a suitable value for $\lambda$, we set aside a small subset of the provided data set as `validation set' for estimating the validation loss as a proxty of generalization error. Let the first 10 entries of the data set be the validation set, and the last 40 entries be the training set. Concatenate their features into matrices $X_{val}$ and $X_{train}$, and their responses into vectors $y_{val}$ and $y_{train}$.
+\newline
+\noindent (1) [\textcolor{blue}{10 points}] Write a function ridge regression($X_{train}$, $y_{train}$, $\lambda$) that takes the training features, training responses and regularizing parameter $\lambda$, and outputs the exact solution $\theta$ for ridge regression. Report the resulting value of $\theta$ for $\lambda = 0.15$.
+\newline
+\noindent (2) [\textcolor{blue}{10 points}] Use the following code to plot graphs of the validation loss and training loss as $\lambda$ varies on logarithmic scale from $\lambda = 10^{-5}$ to $\lambda= 10^0$. Write down the value of $\lambda$ that minimizes the validation loss.
+
+\begin{lstlisting}
+import matplotlib.pyplot as plt
+tn = Xt.shape[0]
+vn = vX.shape[0]
+tloss = []
+vloss = []
+index = -np.arange(0, 5, 0.1)
+
+for i in index:
+w = ridge_regression(tX, tY, 10**i)
+tloss = tloss + [np.sum((np.dot(tX, w) - tY)**2) / tn / 2]
+vloss = vloss + [np.sum((np.dot(vX, w) - vY)**2) / vn / 2]
+
+plt.plot(index, np.log(tloss), 'r')
+plt.plot(index, np.log(vloss), 'b')
+\end{lstlisting}
+
+
+\end{document}
