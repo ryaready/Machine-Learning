@@ -1,0 +1,181 @@
+%
+% File acl2014.tex
+%
+% Contact: koller@ling.uni-potsdam.de, yusuke@nii.ac.jp
+%%
+%% Based on the style files for ACL-2013, which were, in turn,
+%% Based on the style files for ACL-2012, which were, in turn,
+%% based on the style files for ACL-2011, which were, in turn, 
+%% based on the style files for ACL-2010, which were, in turn, 
+%% based on the style files for ACL-IJCNLP-2009, which were, in turn,
+%% based on the style files for EACL-2009 and IJCNLP-2008...
+
+%% Based on the style files for EACL 2006 by 
+%%e.agirre@ehu.es or Sergi.Balari@uab.es
+%% and that of ACL 08 by Joakim Nivre and Noah Smith
+
+\documentclass[11pt]{article}
+\usepackage{fullpage}
+\usepackage{times}
+\usepackage{qtree}
+\usepackage{tree-dvips}
+\usepackage{synttree}
+\usepackage{latexsym}
+\usepackage{amsmath}
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{amssymb}
+\usepackage{url}
+\usepackage{tkz-berge}
+\usepackage[font=footnotesize]{caption}
+\usepackage[utf8]{inputenc}
+\usepackage{arydshln}
+\usepackage{booktabs}
+\usepackage{listings}
+%\setlength\titlebox{5cm}
+
+% You can expand the titlebox if you need extra space
+% to show all the authors. Please do not make the titlebox
+% smaller than 5cm (the original size); we will check this
+% in the camera-ready version and ask you to change it back.
+
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argsort}{arg\,sort}
+%\setlength\titlebox{6.5cm}    % Expanding the titlebox
+
+\newcommand{\squishlist}{
+ \begin{list}{$\bullet$}
+  { \setlength{\itemsep}{0pt}
+     \setlength{\parsep}{3pt}
+     \setlength{\topsep}{3pt}
+     \setlength{\partopsep}{0pt}
+     \setlength{\leftmargin}{1.5em}
+     \setlength{\labelwidth}{1em}
+     \setlength{\labelsep}{0.5em} } }
+
+
+\newcounter{Lcount}
+\newcommand{\squishlisttwo}{
+\begin{list}{\arabic{Lcount}. }
+{ \usecounter{Lcount}
+\setlength{\itemsep}{0pt}
+\setlength{\parsep}{0pt}
+\setlength{\topsep}{0pt}
+\setlength{\partopsep}{0pt}
+\setlength{\leftmargin}{2em}
+\setlength{\labelwidth}{1.5em}
+\setlength{\labelsep}{0.5em} } }
+
+\def\cs#1{{\color{orange}{\bf [CS:} {\it{#1}}{\bf ]}}}
+\def\zn#1{{\color{blue}{\bf [ZN:} {\it{#1}}{\bf ]}}}
+\newcommand{\tocheck}[1]{\textcolor{red}{#1}}
+
+
+\newcommand{\squishend}{
+\end{list} }
+
+\begin{document}
+
+
+\begin{center}
+\includegraphics[scale=0.25]{sutd.png}
+\end{center}
+
+
+\begin{center}
+{{50.007 Machine Learning, Spring 2025\\Homework 2}}
+\end{center}
+
+\begin{center}
+	{\small Due 18 March 2025, 11.59pm}
+\end{center}
+
+
+In this homework, we will look at K-means Clustering, K-medoids Clustering, Support Vector Machines, Logistic Regression, and Neural Networks.
+
+\section{Code Exercise: K-means \textit{vs.} K-medoids Clustering [30 points]}
+
+In this task, you will evaluate and compare the clustering performance of K-means and K-medoids on two synthetic datasets. First, generate a dataset by creating three groups of 40 observations each in 5 dimensions. The cluster centers should be at (0, 0, 0, 0, 0), (5, 5, 5, 5, 5), and (11, 11, 11, 11, 11), respectively, with each group having a diagonal covariance matrix with variance $\sigma^2 = 2$ in every dimension, yielding a total of 120 points. Then, modify this dataset by adding three outlier observations: $(-12, 5, 0, 0, 0)$, $(100, 11, 11, 5, 5)$, and $(-100, 0, 0, 0, -100)$, so that the total number of points becomes 123.
+
+\vspace{0.1in}
+\noindent\textbf{(a) [10 points] Comparing Cost Functions and Cluster Assignments:} 
+Implement the K-means clustering using Lloyd’s Algorithm, where points are assigned to the nearest centroid and centroids are updated as the mean of the points in each cluster (refer to page 20 of Lecture 5 slides). For K-medoids clustering, implement the solution using Lloyd’s Algorithm (a.k.a. Alternate), where points are assigned to the nearest medoid and medoids are updated by minimizing the within-cluster distance (refer to page 9 of Lecture 6 slides).
+
+ Use the squared Euclidean distance for K-means and Manhattan distance (L1 distance) for K-medoids. For both datasets (with 120 and 123 points), perform clustering using K-means and K-medoids with $ k = 3 $. Compare the resulting cluster assignments and compute the total cost function for each method. In your analysis, discuss which method is more affected by the presence of outliers.
+
+\vspace{0.1in}
+\noindent\textbf{(b) [10 points] Impact the Choice of $ k $:} 
+Using the modified dataset with 123 points, generate an ``elbow graph'' for both clustering methods by varying $ k $ from 2 to 10. For K-means, plot $ k $ versus the total within-cluster sum of squared distances, and for K-medoids, plot $ k $ versus the total within-cluster sum of absolute distances. Compare and contrast the two plots. Based on your observations, indicate which value of $ k $ you would choose and explain your reasoning. Also, comment on whether the outliers influence the optimal $ k $ differently for the two methods.
+
+\vspace{0.1in}
+\noindent\textbf{(c) [10 points] Sensitivity to Initialization:} 
+Run K-means clustering 20 times on the modified dataset (n = 123) with $ k = 3 $, using different random initializations for each run. Compute the variance of the total cost function across these runs and compare this variability with that observed for K-medoids. Discuss which method is generally less sensitive to initialization and explain why. (Hint: Reflect on how each method updates its cluster representative.)
+
+\section{Soft-Margin SVM with Kernel Methods [25 points]}  
+
+Consider a training set $
+\{(x_i,y_i)\}_{i=1}^{n} \quad \text{with } y_i \in \{-1,1\},
+$ and let $K(x,x')$ be a kernel function with an associated feature mapping $\phi(x)$ satisfying
+$$
+K(x,x') = \phi(x) \cdot \phi(x').
+$$
+In class, we discussed the primal and dual problems for the linear SVM with the kernel method. Now, we will focus on the soft-margin SVM with kernel methods. To account for potential misclassifications in the $\phi$-coordinates,  we introduce slack variables $\xi_i \ge 0$ and a regularization parameter $C > 0$.
+
+\vspace{0.1in}
+\noindent\textbf{(a) [15 points] Primal and Dual Problems:} 
+Write down the corresponding primal and dual problems for the soft-margin SVM when the kernel method is applied. First, formulate the primal problem for the soft-margin SVM with the kernel method. Then, using Lagrange multipliers and the KKT conditions, derive the dual problem formulation for the soft-margin SVM. \textit{Note: We expect you to go through the mathematical steps in detail (e.g., write down the Lagrangian function) and show the derivations (e.g., deriving the stationarity condition) step by step.}
+
+\vspace{0.1in}
+\noindent\textbf{(b) [10 points] Optimal parameters and Support Vectors:}
+Show how the optimal parameters $\hat{\theta}$ and $\hat{\theta}_0$ can be expressed as functions of optimal $\hat{\alpha}_i$. \textit{Note that you should derive the expression for $\hat{\theta}_0$ in terms of $\hat{\alpha}_i$}. Next, derive the mathematical definition of support vectors by making the optimal $\hat{\alpha}$ satisfy the KKT conditions.
+
+\section{Code Exercise: SVM \textit{vs.} Logistic Regression [20 points]}
+Download and install the widely used machine learning package \texttt{scikit-learn} (along with other standard Python packages such as \texttt{numpy}, \texttt{pandas}, and \texttt{matplotlib}). You will use the Breast Cancer Wisconsin (Diagnostic) dataset for this task. Training data and test data are stored in \texttt{train.csv} and \texttt{test.csv}, respectively, provided in the attached folder \texttt{breast cancer dataset}. There are 455 training samples and 114 testing samples. Each row of the CSV file corresponds to one sample with 30 dimensional features and 1 target label.
+
+\vspace{0.1in}
+\noindent\textbf{(a) 
+% \zn{Since this exercise is just about using sklearn, we can allocate fewer points for this question.}
+[10 points] SVM with Different Kernels:} 
+Train your SVM with different kernels on the Breast Cancer dataset:
+\begin{itemize}
+	\item Use the linear kernel.
+	\item Use the polynomial kernel with $degree=10$.
+	\item Use the RBF kernel with $gamma=0.0001$.
+\end{itemize}
+For each kernel, report the corresponding accuracy on the testing data.
+
+\vspace{0.1in}
+\noindent\textbf{(b) [10 points] Logistic Regression and Comparative Analysis:} 
+Train a Logistic Regression model on the same dataset using scikit-learn and report its accuracy on the testing data. Then compare its performance with that of the SVM models trained in part (a), focusing primarily on the test accuracy. Based on your experimental results, indicate which method you would choose for this task and provide a clear justification for your decision.
+
+
+\section{Code Exercise: Neural Network Architecture Exploration and Decision Boundary Visualization [25 points]}
+
+In this task, you will investigate how different neural network architectures affect a synthetic binary classification problem. Your goal is to understand how the network depth, width, and activation functions impact the training / test performance and the model decision boundary. Use the following baseline configuration: a network with 1 hidden layer of 2 neurons using ReLU activation, a learning rate of 0.01, and 100 training epochs.
+
+First, install the necessary Python libraries (TensorFlow, numpy, matplotlib, and scikit-learn). Generate the dataset using scikit-learn’s \texttt{make\_circles} function with 1000 samples, noise 0.1, factor 0.5, and random state 42 (yielding feature matrix $X$ and label vector $y$). Then split the data set into training and test sets (using an 80/20 split).
+
+\vspace{0.1in}
+\noindent\textbf{(a) [15 points] Neural Network Experiments:} 
+Begin by implementing the baseline model (depth = 1, width = 2, activation = ReLU). Then, run three sets of experiments:
+\begin{enumerate}
+    \item \textbf{Vary Network Depth:} Increase the number of hidden layers (e.g. 2 or 3 layers) while keeping the baseline width and activation.
+    \item \textbf{Vary Network Width:} Change the number of neurons per hidden layer (e.g. 8, 16, etc.) while using the baseline depth and activation.
+    \item \textbf{Vary Activation Functions:} Test different activation functions (e.g. tanh and sigmoid, in addition to ReLU) while keeping the baseline depth and width.
+\end{enumerate}
+For each configuration, train your model using a learning rate of 0.01 for 100 epochs, and record both the training loss and the test loss at each epoch. Then briefly discuss how changes in network depth, width, and activation function affect both loss values.
+
+\vspace{0.1in}
+\noindent\textbf{(b) [10 points] Decision Boundary Visualization and Analysis:} 
+Discuss any signs of overfitting or underfitting observed in your experiments, and explain which configuration achieved the best performance and why. Additionally, visualize the decision boundary of the optimal configuration by plotting its decision boundary in the input space along with the training and testing data points.
+% \zn{Describe any indications of overfitting or underfitting observed in your experiments, and explain which configuration performed best and why. Visualize the decision boundary of the best configuration by plotting its decision boundary over the input space along with the training and testing data points.}
+%Choose at least one configuration that performs well (based on test set loss values) and visualize its decision boundary by plotting it over the input space along with the training and testing data points. Briefly discuss how changes in network depth, width, and activation function affect both the decision boundary and the loss values. Also, describe any indications of overfitting or underfitting observed in your experiments, and explain which configuration performed best and why.
+
+
+
+
+
+
+
+
+\end{document}
